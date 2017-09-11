@@ -13,3 +13,6 @@ target_link_libraries(csort benchmark)
 
 add_executable(csort_stable csort_stable.cpp)
 target_link_libraries(csort_stable benchmark)
+
+add_executable(simple_sort simple_sort.cpp)
+target_link_libraries(simple_sort benchmark)

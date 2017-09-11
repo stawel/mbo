@@ -10,3 +10,6 @@ include_directories(benchmark/include)
 
 add_executable(csort csort.cpp)
 target_link_libraries(csort benchmark)
+
+add_executable(csort_stable csort_stable.cpp)
+target_link_libraries(csort_stable benchmark)

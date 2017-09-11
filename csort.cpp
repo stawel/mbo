@@ -1,10 +1,10 @@
 
-#define MAX 1000000
+#define MAX 20000000
 
 
 static int count[MAX];
 
-void csort(int *from, int *to, int size, int maks) 
+void csort(int *from, int *to, int size, int maks)
 {
     for(int i=0;i<size;i++)
         count[from[i]]++;
@@ -14,14 +14,34 @@ void csort(int *from, int *to, int size, int maks)
 }
 
 
+//counting sort stable
+
+void csort_stable(int *from, int *to, int size, int maks)
+{
+    for(int i=0;i<size;i++)
+        count[from[i]]++;
+
+    for(int i=1;i<=maks;i++)
+        count[i]+=count[i-1];
+    for(int i=size-1;i>=0;i--)
+        to[--count[from[i]]] = from[i];
+    for(int i=0;i<=maks;i++)
+        count[i]=0;
+}
+
+
 //--------------BENCHMARK-------------
 
 #include "benchmark/benchmark.h"
-#include <cassert>
+//#include <cassert>
 #include <algorithm>
 #include <iostream>
+#include <iostream>
+#include <cstdlib>
 
 #define CHECK(x) x
+
+#define ASSERT(x) if(!(x)) std::cerr << "ASSERT " << __PRETTY_FUNCTION__ << " line:" << __LINE__ << " assert: "<< #x << std::endl, std::abort();
 
 static void BM_csort(benchmark::State& state) {
     while (state.KeepRunning()) {
@@ -38,7 +58,28 @@ static void BM_csort(benchmark::State& state) {
         csort(v.data(), r.data(), v.size(), mask);
         CHECK(
             state.PauseTiming();
-            assert(std::equal(r.begin(),r.end(),v2.begin()));
+            ASSERT(std::equal(r.begin(),r.end(),v2.begin()));
+            state.ResumeTiming();
+        )
+    }
+}
+
+static void BM_csort_stable(benchmark::State& state) {
+    while (state.KeepRunning()) {
+        state.PauseTiming();
+        auto n = state.range(0);
+        auto mask = state.range(1);
+        std::vector<int> v(n), r(n);
+        for(auto &x:v) x = rand()&mask;
+        CHECK(
+            auto v2 = v;
+            std::sort(v2.begin(), v2.end());
+        )
+        state.ResumeTiming();
+        csort_stable(v.data(), r.data(), v.size(), mask);
+        CHECK(
+            state.PauseTiming();
+            ASSERT(std::equal(r.begin(),r.end(),v2.begin()));
             state.ResumeTiming();
         )
     }
@@ -60,7 +101,7 @@ static void BM_qsort(benchmark::State& state) {
         std::sort(v.begin(), v.end());
         CHECK(
             state.PauseTiming();
-            assert(std::equal(v.begin(),v.end(),v2.begin()));
+            ASSERT(std::equal(v.begin(),v.end(),v2.begin()));
             state.ResumeTiming();
         )
     }
@@ -81,9 +122,12 @@ int size = (1<<10)*10;
     ->Args({size, 16383})      \
     ->Args({size, 32767})       \
     ->Args({size, 65535})       \
-    ->Args({size, 131071});
+    ->Args({size, 131071})      \
+    ->Args({131071, 131071})    \
+    ->Args({1048575, 1048575});
 
 BM(BM_csort);
+BM(BM_csort_stable);
 BM(BM_qsort);
 /*
 BENCHMARK(BM_qsort)->Args({1<<10, 7})

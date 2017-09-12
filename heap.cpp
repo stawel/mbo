@@ -33,12 +33,12 @@ void down(int i) {
 }
 
 
-void put(int e){
+void push(int e){
     heap[++size] = e;
     up(size);
 }
 
-int remove(){
+int pop(){
     int r = heap[1];
     heap[1] = heap[size--];
     down(1);
@@ -52,8 +52,8 @@ void make_heap() {
 //----------heap sort
 
 void hsort(int *T, int size) {
-    for(int i=0;i<size;i++) put(T[i]);
-    for(int i=0;i<size;i++) T[i]=remove();
+    for(int i=0;i<size;i++) push(T[i]);
+    for(int i=0;i<size;i++) T[i]=pop();
 }
 
 

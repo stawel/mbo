@@ -1,6 +1,6 @@
 
-#define SIZE_MAP 100000000
-#define SIZE_DATA 100000000
+#define MAP_SIZE   100000000
+#define DATA_SIZE  100000000
 
 
 struct Data {
@@ -8,37 +8,37 @@ struct Data {
 
     int key;
     int next;
-}
+};
 
 //data starts at data[1]
-
-Data data[SIZE_DATA];
+Data data[DATA_SIZE];
 int data_size = 0;
 
-int hashMap[SIZE_MAP];
-int size_map = SIZE_MAP; //needed only for benchmarks
+int hashMap[MAP_SIZE];
+int map_size; //needed only for benchmarking
 
 inline int hash(int key) {
-    return key%size_map;
+    return key%map_size;
 }
 
 void put(int idx) {
-    int hash = hash(data[idx].key);
-    data[idx].next = hashMap[hash];
-    hashMap[hash] = idx;
+    int h = hash(data[idx].key);
+    data[idx].next = hashMap[h];
+    hashMap[h] = idx;
 }
 
 int get(int key) {
-    int idx = hashMap[hash];
-    while(l != null){
-        if (l->k == k) return l->e;
-        l = l->next;
-    }
-    return null;
+    int idx = hashMap[hash(key)];
+    while(idx != 0 && data[idx].key != key)
+        idx = data[idx].next;
+    return idx;
 }
 
-
-
+/*
+void remove(int key) {
+    data[get(key)].key = -1;
+}
+*/
 
 
 //--------------BENCHMARK-------------
@@ -54,59 +54,68 @@ int get(int key) {
 #define ASSERT(x) if(!(x)) std::cerr << "ASSERT " << __PRETTY_FUNCTION__ << " line:" << __LINE__ << " assert: "<< #x << std::endl, std::abort();
 
 
-static void BM_hsort(benchmark::State& state) {
+void create_set(int n) {
+    data_size = 0;
+    for(int i=0;i<map_size;i++) hashMap[i]=0;
+    for(int i=0;i<n;i++) {
+        Data d{i,rand(), 0};
+        data[++data_size] = d;
+    }
+}
+void put_set() {
+    for(int i=1;i<=data_size;i++) {
+        put(i);
+    }
+}
+
+static void BM_put(benchmark::State& state) {
     while (state.KeepRunning()) {
         state.PauseTiming();
         auto n = state.range(0);
-        std::vector<int> v(n), r(n);
-        for(auto &x:v) x = rand();
-        CHECK(
-            auto v2 = v;
-            std::sort(v2.begin(), v2.end());
-        )
+        map_size = state.range(1);
+        create_set(n);
         state.ResumeTiming();
-        hsort(v.data(), v.size());
-        CHECK(
-            state.PauseTiming();
-            ASSERT(std::equal(v.begin(),v.end(),v2.begin()));
-            state.ResumeTiming();
-        )
+        put_set();
+    }
+}
+
+static void BM_get(benchmark::State& state) {
+    state.KeepRunning();
+    state.PauseTiming();
+    auto n = state.range(0);
+    map_size = state.range(1);
+    create_set(n);
+    put_set();
+    bool ok = true;
+    state.ResumeTiming();
+    while (state.KeepRunning()) {
+        for(int i=0;i<n;i++) {
+            int idx = 1 + (rand()%data_size);
+            int r = get(data[idx].key);
+            ok = ok && (data[r].key == data[idx].key);
+        }
+        ASSERT(ok);
     }
 }
 
 
-static void BM_qsort(benchmark::State& state) {
-    while (state.KeepRunning()) {
-        state.PauseTiming();
-        auto n = state.range(0);
-        std::vector<int> v(n), r(n);
-        for(auto &x:v) x = rand();
-        CHECK(
-            auto v2 = v;
-            std::sort(v2.begin(), v2.end());
-        )
-        state.ResumeTiming();
-        std::qsort(v.data(), v.size(), sizeof(int), [](const void* a, const void* b)
-        {
-            int arg1 = *static_cast<const int*>(a);
-            int arg2 = *static_cast<const int*>(b);
-        //  return (arg1 > arg2) - (arg1 < arg2); // possible shortcut
-            return arg1 - arg2; // erroneous shortcut (fails if INT_MIN is present)
-        });
-        CHECK(
-            state.PauseTiming();
-            ASSERT(std::equal(v.begin(),v.end(),v2.begin()));
-            state.ResumeTiming();
-        )
-    }
+
+static void CustomArguments(benchmark::internal::Benchmark* b) {
+    auto v1 = {1, 1<<4, 1<<8, 1<<12};
+    auto v2 = {1, 2, 4, 8, 16};
+
+    for(auto x:v1)
+        for(auto y:v2)
+            b->Args({y*x*(1<<8), x*(1<<10)});
 }
 
 
-#define BM(x) BENCHMARK(x)->Ranges({{8, 1<<24}})
+#define BM(x) BENCHMARK(x)->Apply(CustomArguments)
 
-BM(BM_hsort);
-BM(BM_qsort);
+//#define BM(x) BENCHMARK(x)->RangeMultiplier(8)->Ranges({{1<<16, 1<<24},{1<<16, 1<<24} })
 
+BM(BM_get);
+BM(BM_put);
 
 
 BENCHMARK_MAIN();

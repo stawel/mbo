@@ -16,3 +16,7 @@ target_link_libraries(csort_stable benchmark)
 
 add_executable(simple_sort simple_sort.cpp)
 target_link_libraries(simple_sort benchmark)
+
+
+add_executable(heap heap.cpp)
+target_link_libraries(heap benchmark)

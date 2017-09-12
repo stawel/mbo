@@ -1,0 +1,3 @@
+#!/bin/bash
+
+cmake  CMAKE_BUILD_TYPE=RelWithDebInfo . $*

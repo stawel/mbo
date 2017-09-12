@@ -45,6 +45,10 @@ int remove(){
     return r;
 }
 
+void make_heap() {
+    //not implemented!
+}
+
 //----------heap sort
 
 void hsort(int *T, int size) {

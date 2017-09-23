@@ -25,3 +25,6 @@ target_link_libraries(hash_map benchmark)
 
 add_executable(merge_sort merge_sort.cpp)
 target_link_libraries(merge_sort benchmark)
+
+add_executable(mul mul.cpp)
+target_link_libraries(mul benchmark)

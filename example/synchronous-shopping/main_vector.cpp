@@ -8,6 +8,22 @@ using namespace std;
 // array - 1,30358s
 // list  - 1,41626s
 
+template<class T>
+struct array {
+    T * v;
+    int size, alloc;
+    array(int a = 2):size(0), alloc(a) {v=(T*)calloc(a, sizeof(T)); }
+    void re(int a) {
+        alloc = a;
+        v = (T*)realloc(v, sizeof(T)*a);
+    }
+    void push_back(T x) {
+        if(size+1 > alloc) re(alloc*2);
+        v[size++]=x;
+    }
+};
+
+
 #define LL long long
 LL inf = 100000000000LL;
 
@@ -17,18 +33,15 @@ int N, M, K, K_shift;
 struct E {
     int g;
     int v;
-    int next;
 };
 
-int graf[MAX];
+array<E> graf[MAX];
 LL dist[MAX];
-E e[MAX * 40];
-int e_count;
 
 void addE(int a, int b, int v) {
-    e[++e_count] = {b, v, graf[a]};
-    graf[a] = e_count;
+    graf[a].push_back({b, v});
 }
+
 void addS(int s, int f) {
     s *= K_shift;
     int bit = 1 << (f - 1);
@@ -94,15 +107,13 @@ void dijkstra() {
     }
     while (size) {
         int g1 = pop();
-        int next = graf[g1];
-        while (next) {
-            int g2 = e[next].g;
-            LL v2 = dist[g1] + e[next].v;
+        for(int i=0;i<graf[g1].size;i++) {
+            int g2 = graf[g1].v[i].g;
+            LL v2 = dist[g1] + graf[g1].v[i].v;
             if (dist[g2] > v2) {
                 dist[g2] = v2;
                 up(pos[g2]);
             }
-            next = e[next].next;
         }
     }
 }

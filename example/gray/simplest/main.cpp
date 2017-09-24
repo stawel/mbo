@@ -5,7 +5,7 @@
 using namespace std;
 
 #define LEN 100
-#define TESTS 10000
+#define TESTS 20000
 
 char SRC[TESTS][LEN];
 char dummy1[100];
@@ -55,9 +55,9 @@ void toGray(char GRY[LEN][LEN], char IMG[LEN * 2][LEN * 2]) {
 int main() {
     BB(prog);
     srand (time(NULL));
-    for(int i=0;i<TESTS;i++) {
-        for(int j=0;j<LEN;j++) {
-            SRC[i][j] = 'A'+(rand()%26);
+    for (int i = 0; i < TESTS; i++) {
+        for(int j = 0; j < LEN; j++) {
+            SRC[i][j] = 'A'+(rand() % 26);
         }
     }
 
@@ -90,7 +90,8 @@ int main() {
     BB(decode);
     for (int i = 0; i < TESTS; i++) {
         decode(DST[i], GRY[i]);
-    } BE(decode);
+    }
+    BE(decode);
 
     int FAIL = 0;
 
@@ -108,35 +109,38 @@ int main() {
         FAIL += f ? 1 : 0;
     }
     cout << "FAIL:" << FAIL << " out of " << TESTS << "\n";
-    BE(prog); BP(prog); BP(a); BP(b); BP(decode); BP(encode);
+    BE(prog);
+    BP(prog);
+    BP(a);
+    BP(b);
+    BP(decode);
+    BP(encode);
 }
 
 //  encode/decode code
 
-#define toB(c, s)   (((c)-'A'+1)<<s)
-#define fromB(b)    (((b)&31)+'A'-1)
+#define toB(c, s)   (((c)-'A'+5)<<s)
+#define fromB(b)    (((b)&31)+'A'-5)
 #define STR1 "PAWI"
 #define STR2 "WUPE"
 #define STR1_hex (toB('P', 0)|toB('A', 5)|toB('W', 10)| toB('I', 15))
 #define STR2_hex (toB('W', 0)|toB('U', 5)|toB('P', 10)| toB('E', 15))
+#define STR_hex(d,i) (toB(d[i], 0)|toB(d[i+1], 5)|toB(d[i+2], 10)| toB(d[i+3], 15))
 
 #define MASK ((1<<20)-1)
 #define LL unsigned long long
 
+void saveLL(char QRC[LEN][LEN], int &y, LL c) {
+    for (int y_last = y + 3; y < y_last; y++)
+        for (int x = 0; x < 5 * 20; x++)
+            QRC[y][x] = (c >> (x / 5)) & 1;
+}
+
 void encode(char QRC[LEN][LEN], char SRC[LEN]) {
     char d[LEN + 8] = STR1 STR2;
     memcpy(d + 8, SRC, LEN);
-    for (int i = 0; i < LEN + 8; i++) {
-        int c = toB(d[i], 0);
-        for (int b = 0; b < 5; b++) {
-            int posX = ((i % 4) * 5 + b) * 5, posY = (i / 4) * 3;
-            for (int y = 0; y < 3; y++)
-                for (int x = 0; x < 5; x++) {
-                    QRC[posY + y][posX + x] = c & 1;
-                }
-            c >>= 1;
-        }
-    }
+    for (int y = 0, i = 0; i < LEN + 8; i += 4)
+        saveLL(QRC, y, STR_hex(d, i));
 }
 
 //decode
@@ -150,11 +154,8 @@ void dToChar(LL d, char *c) {
 
 LL decodeLine(char GRY[LEN][LEN], int y, int p) {
     LL d = 0, bit = 1;
-    int i = (p + 1) / 2;
-    for (int j = 0; j < 40; j++) {
-        if (GRY[y][i] + GRY[y][i + 1] >= 8) {
-            d |= bit;
-        }
+    for (int i = (p + 1) / 2, j = 0; j < 40; j++) {
+        if (GRY[y][i] + GRY[y][i + 1] >= 8) d |= bit;
         bit <<= 1;
         p ^= 1;
         i += 2 + (p & 1);
@@ -169,21 +170,24 @@ void decode(char DST[LEN], char GRY[LEN][LEN]) {
         for (int p = 0; p < 5; p++)
             out[p][y] = decodeLine(GRY, y, p);
 
-    int p_ = 0, x_ = 0, y_ = 0, bits = 100;
-
-    for (int p = 0; p < 10 && bits > 0; p++)
-        for (int x = 0; x <= 20 && bits > 0; x++)
-            for (int y = 0; y <= LEN / 2 && bits > 0; y++) {
-                int b1 = (STR1_hex ^ ((out[p / 2][y] >> x) & MASK));
-                int b2 = (STR2_hex ^ ((out[p / 2][y + 1 + !(p & 1)] >> x) & MASK));
-                if (b1 + b2 < bits)
-                    bits = b1 + b2, p_ = p, x_ = x, y_ = y + 1 + !(p & 1);
-            }
-
-    for (int i = 0; i < LEN / 4; i++) {
-        p_ ^= 1;
-        y_ += 1 + !(p_ & 1);
-        dToChar(out[p_ / 2][y_] >> x_, &DST[i * 4]);
-    }
+    for (int p = 0; p < 10; p++)
+        for (int x = 0; x <= 20; x++)
+            for (int y = 0; y <= LEN / 2; y++)
+                if ( STR1_hex == ((out[p / 2][y] >> x) & MASK)
+                  && STR2_hex == ((out[p / 2][y + 1 + !(p & 1)] >> x) & MASK)) {
+                    y = y + 1 + !(p & 1);
+                    for (int i = 0; i < LEN; i += 4) {
+                        p ^= 1;
+                        y += 1 + !(p & 1);
+                        dToChar(out[p / 2][y] >> x, &DST[i]);
+                    }
+                    return;
+                }
 }
 
+/*
+ * 100'000 -> 1084,5 (c-'A')
+ *         -> 1071,5 (c-'A'+1)
+ *         ->  910,5 (c-'A'+5)
+ *
+ */

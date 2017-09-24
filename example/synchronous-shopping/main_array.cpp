@@ -12,17 +12,17 @@ template<class T>
 struct array {
     T * v;
     int size, alloc;
-    array(int a = 2):size(0), alloc(a) {v=(T*)calloc(a, sizeof(T)); }
+    array(int a = 2) : size(0), alloc(a) { v = (T*) calloc(a, sizeof(T)); }
     void re(int a) {
         alloc = a;
-        v = (T*)realloc(v, sizeof(T)*a);
+        v = (T*) realloc(v, sizeof(T) * a);
     }
     void push_back(T x) {
-        if(size+1 > alloc) re(alloc*2);
-        v[size++]=x;
+        if (size + 1 > alloc)
+            re(alloc * 2);
+        v[size++] = x;
     }
 };
-
 
 #define LL long long
 LL inf = 100000000000LL;
@@ -36,7 +36,6 @@ struct E {
 };
 
 array<E> graf[MAX];
-LL dist[MAX];
 
 void addE(int a, int b, int v) {
     graf[a].push_back({b, v});
@@ -51,8 +50,10 @@ void addS(int s, int f) {
 }
 
 //  ----------------- heap
-int heap[MAX];
+LL dist[MAX];
 int pos[MAX];
+
+int heap[MAX];
 int size = 0;
 
 inline void swap(int i, int j) {

@@ -21,7 +21,6 @@ struct E {
 };
 
 int graf[MAX];
-LL dist[MAX];
 E e[MAX * 40];
 int e_count;
 
@@ -39,8 +38,10 @@ void addS(int s, int f) {
 }
 
 //  ----------------- heap
-int heap[MAX];
+LL dist[MAX];
 int pos[MAX];
+
+int heap[MAX];
 int size = 0;
 
 inline void swap(int i, int j) {

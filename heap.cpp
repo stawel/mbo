@@ -1,46 +1,42 @@
 
-
 #define MAX_SIZE 100000000
 int heap[MAX_SIZE];
 int size = 0;
 
-
-inline void swap(int i , int j){
+inline void swap(int i, int j) {
     int t = heap[i];
     heap[i] = heap[j];
     heap[j] = t;
 }
-
+inline bool Less(int i, int j) {
+    return heap[i] < heap[j];
+}
 void up(int start) {
-    while(start > 1 && heap[start/2] > heap[start]) {
-        swap(start/2,start);
+    while (start > 1 && Less(start, start / 2)) {
+        swap(start / 2, start);
         start /= 2;
     }
 }
-
-
 void down(int i) {
-    while(i * 2     <= size && heap[i] > heap[i*2] ||
-          i * 2 + 1 <= size && heap[i] > heap[i*2 + 1]){
-        if (i * 2 == size || heap[i * 2] < heap[i*2 + 1]){
-            swap(i, i*2);
+    while (  i * 2     <= size && Less(i * 2, i)
+          || i * 2 + 1 <= size && Less(i * 2 + 1, i)) {
+        if ( i * 2     == size || Less(i * 2, i * 2 + 1)) {
+            swap(i, i * 2);
             i = i * 2;
         } else {
-            swap(i, i*2 + 1);
+            swap(i, i * 2 + 1);
             i = i * 2 + 1;
         }
     }
 }
 
-
-void push(int e){
+void push(int e) {
     heap[++size] = e;
     up(size);
 }
-
-int pop(){
+int pop() {
     int r = heap[1];
-    heap[1] = heap[size--];
+    swap(1, size--);
     down(1);
     return r;
 }

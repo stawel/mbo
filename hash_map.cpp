@@ -2,7 +2,6 @@
 #define MAP_SIZE   100000000
 #define DATA_SIZE  100000000
 
-
 struct Data {
     int data;
 
@@ -18,7 +17,7 @@ int hashMap[MAP_SIZE];
 int map_size; //needed only for benchmarking
 
 inline int hash(int key) {
-    return key%map_size;
+    return key % map_size;
 }
 
 void put(int idx) {
@@ -29,16 +28,14 @@ void put(int idx) {
 
 int get(int key) {
     int idx = hashMap[hash(key)];
-    while(idx != 0 && data[idx].key != key)
+    while (idx != 0 && data[idx].key != key)
         idx = data[idx].next;
     return idx;
 }
 
-/*
 void remove(int key) {
     data[get(key)].key = -1;
 }
-*/
 
 
 //--------------BENCHMARK-------------

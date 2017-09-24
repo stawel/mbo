@@ -1,6 +1,6 @@
 
 #define MAX_SIZE 100000000
-int heap[MAX_SIZE];
+int heap[MAX_SIZE];  //heap starts at heap[1]
 int size = 0;
 
 inline void swap(int i, int j) {

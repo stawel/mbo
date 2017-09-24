@@ -5,22 +5,22 @@
 int t2[MAX];
 int *t; //should be t[MAX]
 
-void merge_sort(int b,int e){
-    if (b+1 >= e) return;
-    
-    int s = (b+e)/2;
-    merge_sort(b,s);
-    merge_sort(s,e);
-    
+void merge_sort(int b, int e) {  // sort [b,e)
+    if (b + 1 >= e) return;
+
+    int s = (b + e) / 2;
+    merge_sort(b, s);
+    merge_sort(s, e);
+
     int i1 = b, i2 = s;
-    for(int p = b; p < e; p++){
-        if (i2 == e || i1 < s && t[i1] <= t[i2]){
+    for (int p = b; p < e; p++) {
+        if (i2 == e || i1 < s && t[i1] <= t[i2]) {
             t2[p] = t[i1++];
         } else {
             t2[p] = t[i2++];
         }
     }
-    for(int p = b; p < e; p++) t[p]=t2[p];
+    for (int p = b; p < e; p++) t[p] = t2[p];
 }
 
 

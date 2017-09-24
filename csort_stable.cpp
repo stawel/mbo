@@ -1,44 +1,35 @@
 
 #define MAX 100000
 
-
-static int count[MAX];
+int count[MAX];
 
 template<int mask, int shift>
-void csort_(int *from, int *to, int size)
-{
-    for(int i=0;i<size;i++)
-        count[(from[i]>>shift)&mask]++;
+void csort_(int *from, int *to, int size) {
+    for (int i = 0; i < size; i++)
+        count[(from[i] >> shift) & mask]++;
 
-    for(int i=1;i<=mask;i++)
-        count[i]+=count[i-1];
-    for(int i=size-1;i>=0;i--)
-        to[--count[(from[i]>>shift)&mask]] = from[i];
-    for(int i=0;i<=mask;i++)
-        count[i]=0;
+    for (int i = 1; i <= mask; i++)
+        count[i] += count[i - 1];
+    for (int i = size - 1; i >= 0; i--)
+        to[--count[(from[i] >> shift) & mask]] = from[i];
+    for (int i = 0; i <= mask; i++)
+        count[i] = 0;
 }
 
-void csort_stable4(int *from, int *to, int size)
-{
-    csort_<255,0>(from, to, size);
-    csort_<255,8>(to, from, size);
-    csort_<255,16>(from, to, size);
-    csort_<255,24>(to, from, size);
+void csort_stable4(int *from, int *to, int size) {
+    csort_<255, 0>(from, to, size);
+    csort_<255, 8>(to, from, size);
+    csort_<255, 16>(from, to, size);
+    csort_<255, 24>(to, from, size);
 }
-
-
-void csort_stable3(int *from, int *to, int size)
-{
-    csort_<2047,0>(from, to, size);
-    csort_<2047,11>(to, from, size);
-    csort_<2047,22>(from, to, size);
+void csort_stable3(int *from, int *to, int size) {
+    csort_<2047, 0>(from, to, size);
+    csort_<2047, 11>(to, from, size);
+    csort_<2047, 22>(from, to, size);
 }
-
-
-void csort_stable2(int *from, int *to, int size)
-{
-    csort_<65535,0>(from, to, size);
-    csort_<65535,16>(to, from, size);
+void csort_stable2(int *from, int *to, int size) {
+    csort_<65535, 0>(from, to, size);
+    csort_<65535, 16>(to, from, size);
 }
 
 

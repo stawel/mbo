@@ -1,32 +1,28 @@
 
 #define MAX 20000000
 
+int count[MAX];
 
-static int count[MAX];
-
-void csort(int *from, int *to, int size, int maks)
-{
-    for(int i=0;i<size;i++)
+void csort(int *from, int *to, int size, int maks) {
+    for (int i = 0; i < size; i++)
         count[from[i]]++;
 
-    for(int j=0, i=0;i<=maks;i++)
-        while(count[i]) count[i]--, to[j++]=i;
+    for (int j = 0, i = 0; i <= maks; i++)
+        while (count[i]) count[i]--, to[j++] = i;
 }
-
 
 //counting sort stable
 
-void csort_stable(int *from, int *to, int size, int maks)
-{
-    for(int i=0;i<size;i++)
+void csort_stable(int *from, int *to, int size, int maks) {
+    for (int i = 0; i < size; i++)
         count[from[i]]++;
 
-    for(int i=1;i<=maks;i++)
-        count[i]+=count[i-1];
-    for(int i=size-1;i>=0;i--)
+    for (int i = 1; i <= maks; i++)
+        count[i] += count[i - 1];
+    for (int i = size - 1; i >= 0; i--)
         to[--count[from[i]]] = from[i];
-    for(int i=0;i<=maks;i++)
-        count[i]=0;
+    for (int i = 0; i <= maks; i++)
+        count[i] = 0;
 }
 
 

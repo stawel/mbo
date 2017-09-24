@@ -1,15 +1,14 @@
 
 
-void isort(int *T, int size)
-{
-    for(int j, x, i=1;i<size;i++) {
+void isort(int *T, int size) {
+    for (int j, x, i = 1; i < size; i++) {
         x = T[i];
-        j = i-1;
-        while(j>=0 && T[j]>x) {
-            T[j+1] = T[j];
+        j = i - 1;
+        while (j >= 0 && T[j] > x) {
+            T[j + 1] = T[j];
             j--;
         }
-        T[j+1] = x;
+        T[j + 1] = x;
     }
 }
 
@@ -17,17 +16,16 @@ void isort(int *T, int size)
 #define VAR(v, n) __typeof(n) v = (n)
 #define SWAP(a, b) { VAR(t,a); a=b,b=t;}
 
-void bsort(int *T, int size)
-{
+void bsort(int *T, int size) {
     do {
         int i, nsize = 0;
-        for(i=1;i<size;i++)
-            if(T[i-1] > T[i]) {
-                SWAP(T[i-1],T[i]);
+        for (i = 1; i < size; i++)
+            if (T[i - 1] > T[i]) {
+                SWAP(T[i - 1], T[i]);
                 nsize = i;
             }
         size = nsize;
-    } while(size>0);
+    } while (size > 0);
 }
 
 

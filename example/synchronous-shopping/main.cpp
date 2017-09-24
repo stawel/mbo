@@ -29,6 +29,7 @@ void addE(int a, int b, int v) {
     e[++e_count] = {b, v, graf[a]};
     graf[a] = e_count;
 }
+
 void addS(int s, int f) {
     s *= K_shift;
     int bit = 1 << (f - 1);

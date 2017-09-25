@@ -28,3 +28,6 @@ target_link_libraries(merge_sort benchmark)
 
 add_executable(mul mul.cpp)
 target_link_libraries(mul benchmark)
+
+add_executable(cache_matrix_mul cache_matrix_mul.cpp)
+target_link_libraries(cache_matrix_mul benchmark)

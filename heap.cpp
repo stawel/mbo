@@ -29,7 +29,7 @@ void down(int i) {
         }
     }
 }
-
+//-----------------------
 void push(int e) {
     heap[++size] = e;
     up(size);
@@ -41,9 +41,7 @@ int pop() {
     return r;
 }
 
-void make_heap() {
-    //not implemented!
-}
+void make_heap() { }  //not implemented!
 
 //----------heap sort
 

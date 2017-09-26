@@ -17,40 +17,40 @@ void mul1(int n)
 void mul2(int n)
 {
 	for (int i = 0; i < n; i++)
-		for (int k = 0; k < n; k++)
-			for (int j = 0; j < n; j++)
+			for (int k = 0; k < n; k++)
+		for (int j = 0; j < n; j++)
 				C[i][j] += A[i][k] * B[k][j];
 }
 
 void mul3(int n)
 {
-	for (int j = 0; j < n; j++)
-		for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
+	for (int i = 0; i < n; i++)
 			for (int k = 0; k < n; k++)
 				C[i][j] += A[i][k] * B[k][j];
 }
 
 void mul4(int n)
 {
-	for (int j = 0; j < n; j++)
-		for (int k = 0; k < n; k++)
-			for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
+			for (int k = 0; k < n; k++)
+	for (int i = 0; i < n; i++)
 				C[i][j] += A[i][k] * B[k][j];
 }
 
 void mul5(int n)
 {
-	for (int k = 0; k < n; k++)
-		for (int i = 0; i < n; i++)
-			for (int j = 0; j < n; j++)
+			for (int k = 0; k < n; k++)
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
 				C[i][j] += A[i][k] * B[k][j];
 }
 
 void mul6(int n)
 {
-	for (int k = 0; k < n; k++)
+			for (int k = 0; k < n; k++)
 		for (int j = 0; j < n; j++)
-			for (int i = 0; i < n; i++)
+	for (int i = 0; i < n; i++)
 				C[i][j] += A[i][k] * B[k][j];
 }
 

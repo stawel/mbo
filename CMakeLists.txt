@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 add_subdirectory(benchmark)
 add_subdirectory(no_stl)
+add_subdirectory(stl)
 
 
 include_directories(benchmark/include)

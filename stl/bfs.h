@@ -7,13 +7,13 @@ void bfs(G &graph, int s) {
     for(auto &i: g)
         i.t = i.s = -1;
     g[s].t = 0;
-    int qu[g.size()], b=0, e=1;
-    qu[0] = s;
+    int b=0, e=1, queue[g.size()];
+    queue[0] = s;
     while (b < e) {
-        s = qu[b++];
+        s = queue[b++];
         for(auto &d: g[s])
             if (g[d.v].t == -1) {
-                qu[e++] = d.v;
+                queue[e++] = d.v;
                 g[d.v].t = g[s].t + 1;
                 g[d.v].s = s;
             }

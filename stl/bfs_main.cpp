@@ -1,4 +1,3 @@
-
 #include <vector>
 #include <iostream>
 
@@ -11,7 +10,7 @@ int main() {
     int n, m, b, e;
     cin >> n >> m;
     Graph<Vbfs> g(n);
-    while(m--) {
+    while (m--) {
         cin >> b >> e;
         g.addE(b, e);
     }

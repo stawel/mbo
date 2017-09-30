@@ -4,19 +4,19 @@
 
 using namespace std;
 #include "graph.h"
-#include "bfs.h"
+#include "dfs.h"
 #include "print.h"
 
 int main() {
     int n, m, b, e;
     cin >> n >> m;
-    Graph<Vbfs> g(n);
+    Graph<Vdfs> g(n);
     while(m--) {
         cin >> b >> e;
         g.addE(b, e);
     }
 
-    bfs(g, 1);
+    dfs(g);
     print(g);
     return 0;
 }

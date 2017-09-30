@@ -15,7 +15,8 @@ int main() {
         g.addE(b, e);
     }
 
-    bfs(g, 1);
+    cin >> b;
+    bfs(g, b);
     print(g);
     return 0;
 }

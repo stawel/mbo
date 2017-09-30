@@ -35,3 +35,6 @@ target_link_libraries(cache_matrix_mul benchmark)
 add_executable(map_vs_vector map_vs_vector.cpp)
 target_link_libraries(map_vs_vector benchmark)
 
+add_executable(binary_search binary_search.cpp)
+target_link_libraries(binary_search benchmark)
+

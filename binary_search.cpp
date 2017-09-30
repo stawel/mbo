@@ -2,27 +2,29 @@
 
 #define MAX 100000000
 
-int t2[MAX];
-int *t; //should be t[MAX]
+int t[MAX];
 
-void merge_sort(int b, int e) {  // sort [b,e)
-    if (b + 1 >= e) return;
 
-    int s = (b + e) / 2; //if b+e may overflow then use b+(e-b)/2
-    merge_sort(b, s);
-    merge_sort(s, e);
-
-    int i1 = b, i2 = s;
-    for (int p = b; p < e; p++) {
-        if (i2 == e || i1 < s && t[i1] <= t[i2]) {
-            t2[p] = t[i1++];
-        } else {
-            t2[p] = t[i2++];
-        }
+int binary_search(int b, int e, int x) {  // t - sorted, search for x in [b,e)
+    while (b < e) {
+        int s = (b + e) / 2; //if b+e may overflow then use b+(e-b)/2
+        if (t[s] == x) return s;
+        if (x < t[s])  e = s;
+        else           b = s + 1;
     }
-    for (int p = b; p < e; p++) t[p] = t2[p];
+    return -1;
 }
 
+
+//recursive
+int binary_searchR(int b, int e, int x) {  // t - sorted, search for x in [b,e)
+    if (b >= e) return -1;
+
+    int s = (b + e) / 2; //if b+e may overflow then use b+(e-b)/2
+    if (t[s] == x) return s;
+    if (x < t[s])  return binary_search(b,     s, x);
+    else           return binary_search(s + 1, e, x);
+}
 
 
 
@@ -38,7 +40,7 @@ void merge_sort(int b, int e) {  // sort [b,e)
 
 #define ASSERT(x) if(!(x)) std::cerr << "ASSERT " << __PRETTY_FUNCTION__ << " line:" << __LINE__ << " assert: "<< #x << std::endl, std::abort();
 
-
+/* TODO
 static void BM_msort(benchmark::State& state) {
     while (state.KeepRunning()) {
         state.PauseTiming();
@@ -94,5 +96,5 @@ BM(BM_msort);
 BM(BM_qsort);
 
 
-
+*/
 BENCHMARK_MAIN();

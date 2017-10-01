@@ -7,5 +7,6 @@ int main() {
     int n;
     cin >> n;
     cout << isPrime(n) << endl;
+    cout << countBits(n) << endl;
     return 0;
 }

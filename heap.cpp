@@ -1,4 +1,3 @@
-
 #define MAX_SIZE 100000000
 int heap[MAX_SIZE];  //heap starts at heap[1]
 int size = 0;
@@ -8,24 +7,23 @@ inline void swap(int i, int j) {
     heap[i] = heap[j];
     heap[j] = t;
 }
-inline bool Less(int i, int j) {
+inline bool less(int i, int j) {
     return heap[i] < heap[j];
 }
 void up(int start) {
-    while (start > 1 && Less(start, start / 2)) {
+    while (start > 1 && less(start, start / 2)) {
         swap(start / 2, start);
         start /= 2;
     }
 }
 void down(int i) {
-    while (  i * 2     <= size && Less(i * 2, i)
-          || i * 2 + 1 <= size && Less(i * 2 + 1, i)) {
-        if ( i * 2     == size || Less(i * 2, i * 2 + 1)) {
-            swap(i, i * 2);
-            i = i * 2;
-        } else {
-            swap(i, i * 2 + 1);
-            i = i * 2 + 1;
+    int right = i * 2 + 1, smaller = i * 2;
+    if (right <= size && less(right, smaller))
+            smaller = right;
+    if (smaller <= size) {
+        if (less(smaller, i)) {
+            swap(i, smaller);
+            down(smaller); //tail recursion! (rekurencja ogonowa)
         }
     }
 }
@@ -46,14 +44,28 @@ void make_heap() { }  //not implemented!
 //----------heap sort
 
 void hsort(int *T, int size) {
-    for(int i=0;i<size;i++) push(T[i]);
-    for(int i=0;i<size;i++) T[i]=pop();
+    for(int i = 0;i < size; i++) push(T[i]);
+    for(int i = 0;i < size; i++) T[i] = pop();
 }
 
 
 
 
 
+
+//old implementation, slower (ignore)
+void down_old(int i) {
+    while (  i * 2     <= size && less(i * 2, i)
+          || i * 2 + 1 <= size && less(i * 2 + 1, i)) {
+        if ( i * 2     == size || less(i * 2, i * 2 + 1)) {
+            swap(i, i * 2);
+            i = i * 2;
+        } else {
+            swap(i, i * 2 + 1);
+            i = i * 2 + 1;
+        }
+    }
+}
 //--------------BENCHMARK-------------
 #include "benchmark/benchmark.h"
 //#include <cassert>
